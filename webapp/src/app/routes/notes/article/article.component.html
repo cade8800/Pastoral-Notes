@@ -1,0 +1,39 @@
+<page-header [title]="noteDetail.title">
+  {{noteDetail.summary}}
+</page-header>
+
+<nz-card>
+
+  <nz-spin [nzSpinning]="loading"></nz-spin>
+
+  <div id="editormd_view">
+  </div>
+
+  <nz-divider></nz-divider>
+
+  <div *ngIf='!loading'>
+
+    <div class="options">
+      <div class="category">
+        <strong>类别:</strong>
+        <span *ngFor='let c of noteDetail.categories' (click)='goCategory(c.id)'>{{c.name}}</span>
+      </div>
+      <div class="label">
+        <strong>标签:</strong>
+        <nz-tag style="cursor: pointer;" *ngFor='let l of noteDetail.labels' (click)='goLabel(l.id)'>{{l.name}}</nz-tag>
+      </div>
+    </div>
+
+    <div>
+      写于：{{noteDetail.createTime|date:'yyyy-MM-dd HH:mm'}}
+      <nz-divider nzType="vertical"></nz-divider>
+      更新于：{{noteDetail.updateTime|date:'yyyy-MM-dd HH:mm'}}
+      <nz-divider nzType="vertical"></nz-divider>
+      <a nz-button nzType="link" (click)="edit()">编辑</a>
+      <nz-divider nzType="vertical"></nz-divider>
+      <a nz-button nzType="link" (click)="delete()">删除</a>
+    </div>
+
+  </div>
+
+</nz-card>

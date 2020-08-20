@@ -1,0 +1,100 @@
+server:
+  port: 20172
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:20170/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+spring:
+  profiles:
+    #active: debug
+    active: release
+  application:
+    name: notes-api
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  thymeleaf:
+    cache: true
+  servlet:
+    multipart:
+      enabled: true
+      max-request-size: 20MB
+      max-file-size: 20MB
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall,log4j
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  redis:
+    host: ******
+    port: ******
+    password: ******
+
+  mail:
+    host: ******
+    username: ******
+    password: ******
+    default-encoding: UTF-8
+    protocol: smtp
+    port: 465
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+          ssl:
+            enable: true
+
+feign:
+  hystrix:
+    enabled: true
+
+loginClient:
+  clientId: notes.api
+  secret: eedc
+
+weChatMiniProgram:
+  appId: ******
+  appSercret: ******
+
+file:
+  upload-dir=: /uploads/pastoral_notes
+
+mybatis:
+  type-aliases-package: com.graze.pastoral.notes.domain.entity
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.log4j2.Log4j2Impl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+aliyunSms:
+  regionId: ******
+  accessKeyId: ******
+  accessSecret: ******
+  signName: ******
+  templateCode: ******
+

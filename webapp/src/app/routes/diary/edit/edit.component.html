@@ -1,0 +1,131 @@
+<page-header title=""></page-header>
+
+<div class="main_div">
+
+    <nz-card class="title">
+        <div nz-row nzGutter="24" class="other_info">
+
+            <div nz-col nzMd="24" nzLg="8"
+                [ngStyle]="{ width: '300px', border: '1px solid #d9d9d9', borderRadius: '4px' }">
+                <nz-calendar [nzFullscreen]="false" [(ngModel)]="diaryDetail.date"></nz-calendar>
+            </div>
+
+            <div nz-col nzMd="24" nzLg="16" class="other_input">
+
+                <nz-form-item>
+                    <nz-form-label [nzSm]="4" [nzXs]="24" nzRequired>
+                        <i nz-icon nzType="clock-circle" nzTheme="outline" class="icon_type"></i>
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="16" [nzXs]="24">
+                        <div class="input_item">
+                            {{diaryDetail.date|date:'yyyy-MM-dd EEEE'}}
+                        </div>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item>
+                    <nz-form-label [nzSm]="4" [nzXs]="24" nzRequired>
+                        <i nz-icon nzType="environment" nzTheme="outline" class="icon_type"></i>
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="16" [nzXs]="24">
+                        <input class="input_item" placeholder="位置" [(ngModel)]='diaryDetail.location' />
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item>
+                    <nz-form-label [nzSm]="4" [nzXs]="24" nzRequired>
+                        <i nz-icon nzType="coffee" nzTheme="outline" class="icon_type"></i>
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="16" [nzXs]="24">
+                        <input class="input_item" placeholder="天气" [(ngModel)]='diaryDetail.weather' />
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item>
+                    <nz-form-label [nzSm]="4" [nzXs]="24" nzRequired>
+                        <i nz-icon nzType="bulb" nzTheme="outline" class="icon_type"></i>
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="16" [nzXs]="24">
+                        <textarea class="input_item" rows="4" placeholder="摘要"
+                            [(ngModel)]='diaryDetail.summary'></textarea>
+                    </nz-form-control>
+                </nz-form-item>
+
+            </div>
+
+
+        </div>
+    </nz-card>
+
+    <div class="content">
+        <div id="editor">
+            <textarea></textarea>
+        </div>
+    </div>
+
+    <nz-card class="options">
+
+
+        <div class="option">
+            <div class="tap">标签</div>
+            <nz-divider></nz-divider>
+            <div class="option_content">
+
+                <nz-select class="select" nzMode="multiple" [nzDropdownRender]="renderTemplate" nzPlaceHolder="请选择标签"
+                    [(ngModel)]="diaryDetail.labels" nzBorderless="true" nzSize="large">
+                    <nz-option *ngFor="let option of labels" [nzLabel]="option.name" [nzValue]="option.id"></nz-option>
+                </nz-select>
+                <ng-template #renderTemplate>
+                    <nz-divider></nz-divider>
+
+                    <div style="padding: 0 24px 24px 24px;">
+                        <nz-input-group nzSearch [nzAddOnAfter]="suffixButton">
+                            <input type="text" #inputElement nz-input placeholder="请输入新标签名" />
+                        </nz-input-group>
+                        <ng-template #suffixButton>
+                            <button nz-button nzType="primary" (click)="addLabel(inputElement)"
+                                [nzLoading]="newLabelLoading">
+                                <i nz-icon nzType="plus"></i>新标签</button>
+                        </ng-template>
+                    </div>
+
+                </ng-template>
+
+            </div>
+        </div>
+
+        <div class="option">
+            <div class="tap">封面</div>
+            <nz-divider></nz-divider>
+            <div class="option_content">
+
+                <div class="image_list">
+
+                    <div class="image_item" *ngFor="let item of contentImageList"
+                        [ngStyle]="{'background-image': 'url('+item.url+')'}" (click)="checkCover(item)">
+
+                        <div class="iamge_mask" *ngIf="item.selected">
+                            <i nz-icon nzType="check" nzTheme="outline"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <nz-empty *ngIf="contentImageList.length<1" nzNotFoundImage="simple" nzNotFoundContent="正文中无可用做封面的图片">
+                </nz-empty>
+
+            </div>
+        </div>
+
+
+        <div class="operating">
+            <button nz-button nzType="primary" nzSize="large" nzShape="round" (click)="sumbit()"
+                [nzLoading]="submitLoading">
+                <i nz-icon nzType="save" nzTheme="outline"></i> 保存
+            </button>
+        </div>
+
+    </nz-card>
+
+</div>

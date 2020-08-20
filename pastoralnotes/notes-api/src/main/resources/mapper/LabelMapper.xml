@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.graze.pastoral.notes.api.dao.LabelMapper">
+
+    <resultMap id="GetLabelsMap" type="com.graze.pastoral.notes.domain.dto.label.LabelOutput">
+        <result property="id" column="id" javaType="java.util.UUID" jdbcType="VARCHAR"
+                typeHandler="com.graze.pastoral.notes.api.handler.UuidTypeHandler"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="recordTotal" column="recordTotal"/>
+    </resultMap>
+    <select id="getLabels" resultMap="GetLabelsMap">
+        select target.id,target.name,target.type,target.recordTotal
+        from
+        (
+        select * from pn_label as label
+        left join(
+
+        <choose>
+            <when test="labelType=='DIARY'">
+                select
+                l.id as labelId,
+                count(*) as recordTotal
+
+                from pn_label as l,
+                pn_diary_label as nl,
+                pn_diary as n
+
+                where l.id=nl.label_id
+                and n.id=nl.diary_id
+                and n.is_deleted=false
+
+                group by l.id
+            </when>
+            <otherwise>
+                select l.id as labelId,count(*) as recordTotal
+                from pn_label as l,
+                pn_note_label as nl,
+                pn_note as n
+                where l.id=nl.label_id
+                and n.id=nl.note_id
+                and n.is_deleted=false
+                group by l.id
+            </otherwise>
+        </choose>
+
+        ) as labelCount
+        on label.id=labelCount.labelId
+        where label.is_deleted=false
+        and label.create_user_id=#{createUserId}
+        and label.type=#{labelType}
+        ) as target
+        order by name
+    </select>
+
+    <select id="getNotesLabelIds" resultType="java.lang.String">
+        select
+            nl.label_id
+        from pn_note_label nl
+        where
+            nl.note_id=#{noteId}
+    </select>
+
+    <select id="getNoteLabels" resultMap="GetLabelsMap">
+        select l.id,l.name
+        from pn_note_label nl,pn_label l
+        where nl.note_id=#{noteId}
+        and nl.label_id=l.id
+    </select>
+
+    <update id="updateLabel">
+        update pn_label c
+        set name=#{name},
+        update_time=#{updateTime},
+        update_user_id=#{updateUserId}
+        where c.id=#{labelId}
+        and c.create_user_id=#{updateUserId}
+    </update>
+
+    <select id="countLabelByName" resultType="java.lang.Integer">
+        select count(*)
+        from pn_label c
+        where c.name=#{name}
+        and c.create_user_id=#{createUserId}
+        and c.is_deleted=false
+        and c.type=#{type}
+    </select>
+
+    <select id="getLabelNameById" resultType="java.lang.String">
+        select c.name
+        from pn_label c
+        where c.id=#{labelId}
+    </select>
+
+    <update id="deleteLabelById">
+        update pn_label c
+        set c.is_deleted=true,
+        update_time=#{updateTime},
+        update_user_id=#{createUserId}
+        where c.id=#{labelId}
+        and c.create_user_id=#{createUserId}
+    </update>
+
+    <select id="getDiaryLabels" resultMap="GetLabelsMap">
+        select l.id,l.name
+        from pn_diary_label nl,pn_label l
+        where nl.diary_id=#{diaryId}
+        and nl.label_id=l.id
+    </select>
+
+</mapper>

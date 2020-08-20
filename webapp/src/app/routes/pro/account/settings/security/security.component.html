@@ -1,0 +1,114 @@
+<nz-list nzItemLayout="horizontal">
+
+  <nz-list-item>
+    <ul nz-list-item-actions>
+      <nz-list-item-action>
+        <!-- <a (click)="msg.info('edit')">edit</a> -->
+      </nz-list-item-action>
+    </ul>
+    <nz-list-item-meta nzTitle="登录邮箱" [nzDescription]="emailDesc">
+      <ng-template #emailDesc>
+        已绑定邮箱：{{setting.user.username}}
+      </ng-template>
+    </nz-list-item-meta>
+  </nz-list-item>
+
+  <nz-list-item>
+    <ul nz-list-item-actions>
+      <nz-list-item-action>
+        <!-- <a (click)="msg.info('edit')">edit</a> -->
+      </nz-list-item-action>
+    </ul>
+    <nz-list-item-meta nzTitle="登录手机" [nzDescription]="phoneDesc">
+      <ng-template #phoneDesc>
+        已绑定手机：{{setting.user.mobilePhone}}
+      </ng-template>
+    </nz-list-item-meta>
+  </nz-list-item>
+
+  <nz-list-item>
+    <ul nz-list-item-actions>
+      <nz-list-item-action>
+        <a (click)="isVisible=true">修改</a>
+      </nz-list-item-action>
+    </ul>
+    <nz-list-item-meta nzTitle="账户密码" [nzDescription]="passwordDesc">
+      <ng-template #passwordDesc>
+        <!-- 当前密码强度：<span class="text-green">强</span>  -->***********
+      </ng-template>
+    </nz-list-item-meta>
+  </nz-list-item>
+
+  <!-- <nz-list-item [nzActions]="[questionOp]">
+    <ng-template #questionOp>
+      <a (click)="msg.success('Edit')">修改</a>
+    </ng-template>
+    <nz-list-item-meta nzTitle="密保问题" [nzDescription]="questionDesc">
+      <ng-template #questionDesc>
+        未设置密保问题，密保问题可有效保护账户安全
+      </ng-template>
+    </nz-list-item-meta>
+  </nz-list-item> -->
+
+  <!-- <nz-list-item [nzActions]="[mfaOp]">
+    <ng-template #mfaOp>
+      <a (click)="msg.success('Edit')">修改</a>
+    </ng-template>
+    <nz-list-item-meta nzTitle="MFA 设备" [nzDescription]="mfaDesc">
+      <ng-template #mfaDesc>
+        未绑定 MFA 设备，绑定后，可以进行二次确认
+      </ng-template>
+    </nz-list-item-meta>
+  </nz-list-item> -->
+</nz-list>
+
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="密码重置" (nzOnCancel)="isVisible=false" (nzOnOk)="editPasswordOk()">
+  <form nz-form [formGroup]="validateForm" (ngSubmit)="editPasswordOk()">
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6" nzFor="email" nzRequired>原始密码</nz-form-label>
+      <nz-form-control [nzSpan]="14" [nzErrorTip]="oldPasswordErrorTpl">
+        <input nz-input type="password" formControlName="oldPassword" maxlength="32" minlength="6">
+        <ng-template #oldPasswordErrorTpl let-control>
+          <ng-container *ngIf="control.hasError('minlength')||control.hasError('maxlength')">
+            密码长度必须在6~32位之间
+          </ng-container>
+          <ng-container *ngIf="control.hasError('required')">
+            请输入原始密码
+          </ng-container>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6" nzFor="email" nzRequired>新密码</nz-form-label>
+      <nz-form-control [nzSpan]="14" [nzErrorTip]="newPasswordErrorTpl">
+        <input nz-input type="password" formControlName="newPassword" maxlength="32" minlength="6">
+        <ng-template #newPasswordErrorTpl let-control>
+          <ng-container *ngIf="control.hasError('minlength')||control.hasError('maxlength')">
+            密码长度必须在6~32位之间
+          </ng-container>
+          <ng-container *ngIf="control.hasError('required')">
+            请输入新密码
+          </ng-container>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6" nzFor="email" nzRequired>确认新密码</nz-form-label>
+      <nz-form-control [nzSpan]="14" [nzErrorTip]="confirmPasswordErrorTpl">
+        <input nz-input type="password" formControlName="confirmPassword" maxlength="32" minlength="6">
+        <ng-template #confirmPasswordErrorTpl let-control>
+          <ng-container *ngIf="control.hasError('minlength')||control.hasError('maxlength')">
+            密码长度必须在6~32位之间
+          </ng-container>
+          <ng-container *ngIf="control.hasError('required')">
+            请输入确认新密码
+          </ng-container>
+          <ng-container *ngIf="control.errors?.equar">两次输入的密码不匹配!</ng-container>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-modal>

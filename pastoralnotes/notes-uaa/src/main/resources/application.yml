@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: notes-uaa
+  profiles:
+    #active: debug
+    active: release
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+  redis:
+    host: ******
+    port: ******
+    password: ******
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:20170/eureka/
+    register-with-eureka: true
+    fetch-registry: false
+server:
+  port: 20171

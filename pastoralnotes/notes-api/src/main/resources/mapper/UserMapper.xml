@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.graze.pastoral.notes.api.dao.UserMapper">
+
+    <resultMap id="getUserInfoMap" type="com.graze.pastoral.notes.domain.dto.user.UserInfoDto">
+        <result property="nickname" column="nickname"/>
+        <result property="avatarUrl" column="avatar_url"/>
+        <result property="gender" column="gender"/>
+        <result property="city" column="city"/>
+        <result property="province" column="province"/>
+        <result property="country" column="country"/>
+        <result property="address" column="address"/>
+        <result property="username" column="username"/>
+        <result property="mobilePhone" column="mobile_phone"/>
+    </resultMap>
+    <select id="getUserInfo" resultMap="getUserInfoMap">
+        select u.nickname,
+        u.avatar_url,
+        u.gender,
+        u.city,
+        u.province,
+        u.country,
+        u.address,
+        u.mobile_phone,
+        u.username
+        from pn_user u
+        where u.id=#{userId}
+    </select>
+
+    <update id="updateUserInfo">
+        update pn_user u set
+        u.nickname=#{nickname},
+        u.gender=#{gender},
+        u.country=#{country},
+        u.province=#{province},
+        u.city=#{city},
+        u.address=#{address},
+        u.avatar_url=#{avatarUrl}
+        where u.id=#{userId}
+    </update>
+
+    <select id="getUserPassword" resultType="java.lang.String">
+        select password from pn_user where id=#{userId}
+    </select>
+
+    <update id="updateUserPassword">
+        update pn_user u set
+        u.password=#{newPassword}
+        where u.id=#{userId}
+    </update>
+
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.graze.pastoral.notes.api.dao.CategoryMapper">
+
+    <resultMap id="getCategoriesMap" type="com.graze.pastoral.notes.domain.dto.category.CategoryOutput">
+        <result property="id" column="id" javaType="java.util.UUID" jdbcType="VARCHAR"
+                typeHandler="com.graze.pastoral.notes.api.handler.UuidTypeHandler"/>
+        <result property="name" column="name"/>
+        <result property="recordTotal" column="recordTotal"/>
+    </resultMap>
+    <select id="getCategories" resultMap="getCategoriesMap">
+        select target.id,target.name,target.recordTotal
+        from
+        (
+            select * from pn_category as category
+            left join(
+                select c.id as categoryId,count(*) as recordTotal
+                from pn_category as c,pn_note_category as nc,pn_note n
+                where c.id=nc.category_id
+                and n.id=nc.note_id
+                and n.is_deleted=false
+                group by c.id
+            ) as categoryCount
+            on category.id=categoryCount.categoryId
+            where category.is_deleted=false
+            and category.create_user_id=#{createUserId}
+        ) as target
+        order by name
+    </select>
+
+    <select id="getNotesCategoryIds" resultType="java.lang.String">
+        select
+            nc.category_id
+        from pn_note_category nc
+        where
+            nc.note_id=#{noteId}
+    </select>
+
+    <select id="getNoteCategories" resultMap="getCategoriesMap">
+        select c.id,c.name
+        from pn_note_category nc,pn_category c
+        where nc.note_id=#{noteId}
+        and nc.category_id=c.id
+    </select>
+
+    <update id="updateCategory">
+        update pn_category c
+        set name=#{name},
+        update_time=#{updateTime},
+        update_user_id=#{updateUserId}
+        where c.id=#{categoryId}
+        and c.create_user_id=#{updateUserId}
+    </update>
+
+    <select id="countCategoriesByName" resultType="java.lang.Integer">
+        select count(*)
+        from pn_category c
+        where c.name=#{name}
+        and c.create_user_id=#{createUserId}
+        and c.is_deleted=false
+    </select>
+
+    <select id="getCategoryNameById" resultType="java.lang.String">
+        select c.name
+        from pn_category c
+        where c.id=#{categoryId}
+    </select>
+
+    <update id="deleteCategoryById">
+        update pn_category c
+        set c.is_deleted=true,
+        update_time=#{updateTime},
+        update_user_id=#{createUserId}
+        where c.id=#{categoryId}
+        and c.create_user_id=#{createUserId}
+    </update>
+
+</mapper>

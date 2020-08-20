@@ -1,0 +1,41 @@
+<page-header></page-header>
+
+<nz-card>
+    <p>
+        <button nz-button nzType="primary" (click)="add()">
+            <i nz-icon nzType="plus"></i>新标签
+        </button>
+    </p>
+    <nz-table #basicTable [nzData]="labels" [nzFrontPagination]='false' [nzLoading]="labelLoading">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>标签名</th>
+                <th>标签下笔记数量</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of basicTable.data; index as i">
+                <td>{{i+1}}</td>
+                <td>{{data.name}}</td>
+                <td>{{data.recordTotal||0}}</td>
+                <td>
+                    <a nz-button nzType="link" (click)='edit(data)'>编辑</a>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <a nz-button nzType="link" [disabled]='data.recordTotal>0' (click)='delete(data)'>删除</a>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+
+</nz-card>
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="编辑" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzFor="email">标签名</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+            <input nz-input type="text" [(ngModel)]="labelDto.name">
+        </nz-form-control>
+    </nz-form-item>
+</nz-modal>

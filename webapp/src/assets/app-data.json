@@ -1,0 +1,74 @@
+{
+  "app": {
+    "name": "田园笔记 - PastoralNotes",
+    "description": "田园笔记是一个高效的笔记本和日记本。"
+  },
+  "user": {
+    "name": "Admin",
+    "avatar": "./assets/tmp/img/avatar.jpg",
+    "email": "cipchk@qq.com"
+  },
+  "menu": [
+    {
+      "text": "笔记本",
+      "group": true,
+      "hideInBreadcrumb": true,
+      "children": [
+        {
+          "text": "新笔记",
+          "link": "/notes/new",
+          "icon": "anticon-plus"
+        },
+        {
+          "text": "所有笔记",
+          "link": "/notes/list",
+          "icon": "anticon-read"
+        },
+        {
+          "text": "笔记分类",
+          "link": "/notes/category",
+          "icon": "anticon-block"
+        },
+        {
+          "text": "笔记标签",
+          "link": "/notes/tags",
+          "icon": "anticon-tags"
+        }
+      ]
+    },
+    {
+      "text": "日记本",
+      "group": true,
+      "hideInBreadcrumb": true,
+      "children": [
+        {
+          "text": "新日记",
+          "link": "/diary/new",
+          "icon": "anticon-plus"
+        },
+        {
+          "text": "所有日记",
+          "link": "/diary/list",
+          "icon": "anticon-snippets"
+        },
+        {
+          "text": "日记标签",
+          "link": "/diary/tags",
+          "icon": "anticon-tags"
+        }
+      ]
+    },
+    {
+      "text": "设置",
+      "group": true,
+      "hideInBreadcrumb": true,
+      "children": [
+        {
+          "text": "个人中心",
+          "link": "/pro/account/settings",
+          "icon": "anticon-user"
+        }
+      ]
+    }
+  ]
+}

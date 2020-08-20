@@ -1,0 +1,115 @@
+<div nz-row nzGutter="24" class="py-lg">
+    <div nz-col nzMd="24" nzLg="7">
+        <nz-card [nzBordered]="false" class="mb-lg" [nzLoading]="false">
+            <ng-container>
+                <div class="tags">
+                    <div class="tagsTitle">标签</div>
+
+
+                    <nz-spin [nzSpinning]="labelLoading">
+                        <nz-tag class="notes_tag" nzMode="checkable" [(nzChecked)]="getDiariesInput.hasNoLabels"
+                            (nzCheckedChange)="getHasNoLabelDiaries($event)">
+                            <span>无标签</span>
+                            <!-- (0) -->
+                        </nz-tag>
+                        <nz-tag class="notes_tag" *ngFor="let tag of labels" nzMode="checkable"
+                            [(nzChecked)]="tag.selected" (nzCheckedChange)="changeLabel($event, tag)">
+                            <span>{{ tag.name }}</span>
+                            ({{tag.recordTotal||0}})
+                        </nz-tag>
+                        <nz-empty nzNotFoundImage="simple" *ngIf="labels.length === 0" class="tags_empty"></nz-empty>
+                    </nz-spin>
+
+                </div>
+                <nz-divider nzDashed></nz-divider>
+                <div class="team">
+                    <div class="tagsTitle">按时间筛选</div>
+
+                    <nz-range-picker [(ngModel)]="dateRange" (ngModelChange)="rangeDateChange($event)">
+                    </nz-range-picker>
+
+                </div>
+                <nz-divider nzDashed></nz-divider>
+                <div class="team">
+                    <div class="tagsTitle">按日历筛选</div>
+
+                    <div [ngStyle]="{width: '100%', border: '1px solid #d9d9d9', borderRadius: '4px' }">
+
+                        <nz-calendar [nzFullscreen]="false" (nzSelectChange)="calendarChange($event)">
+                        </nz-calendar>
+
+                    </div>
+
+                </div>
+            </ng-container>
+        </nz-card>
+    </div>
+    <div nz-col nzMd="24" nzLg="17">
+        <nz-card class="tabsCard" [nzBordered]="false">
+
+            <nz-list nzItemLayout="vertical" [nzLoading]="noteLoading">
+
+                <nz-list-item *ngFor="let item of diaryPages.content">
+                    <nz-list-item-meta>
+                        <nz-list-item-meta-title>
+
+                            <i nz-icon nzType="calendar" nzTheme="outline"></i>
+                            {{item.date|date:'yyyy-MM-dd EEEE'}}
+
+                            <i nz-icon nzType="environment" nzTheme="outline"></i>
+                            {{item.location}}
+
+                            <i nz-icon nzType="coffee" nzTheme="outline"></i>
+                            {{item.weather}}
+
+                        </nz-list-item-meta-title>
+                        <nz-list-item-meta-description>
+                            　　{{item.summary}}
+                        </nz-list-item-meta-description>
+                    </nz-list-item-meta>
+                    <div style="min-height: 50px; overflow: hidden;">
+                        {{ item.content }}
+                    </div>
+                    <ul nz-list-item-actions>
+                        <nz-list-item-action>
+                            {{item.updateTime|date:'yyyy-MM-dd HH:mm'}}
+                        </nz-list-item-action>
+                        <nz-list-item-action>
+                            <span (click)='diaryView(item)'><i nz-icon nzType="eye"></i> </span>
+                        </nz-list-item-action>
+                        <nz-list-item-action>
+                            <span (click)='diaryEdit(item)'><i nz-icon nzType="edit"></i> </span>
+                        </nz-list-item-action>
+                        <nz-list-item-action>
+                            <span nz-popconfirm nzPopconfirmTitle="删除后不可恢复，确定删除吗？" nzPopconfirmPlacement="bottom"
+                                (nzOnConfirm)="diaryDelete(item)">
+                                <i nz-icon nzType="delete"></i>
+                            </span>
+
+                        </nz-list-item-action>
+                    </ul>
+                    <nz-list-item-extra>
+                        <div class="list_img" *ngIf='item.coverUrl'>
+                            <img [src]="item.coverUrl" />
+                        </div>
+                    </nz-list-item-extra>
+                </nz-list-item>
+
+                <nz-skeleton [nzAvatar]="false" [nzActive]="true" [nzTitle]="true" [nzLoading]="loadMore">
+                </nz-skeleton>
+
+                <nz-list-empty *ngIf="diaryPages.content.length === 0"></nz-list-empty>
+
+                <div class="loadmore" *ngIf="diaryPages.content.length> 0" nz-list-load-more>
+                    <button nz-button *ngIf="true" [nzLoading]="loadMore" [disabled]="noteLoadingEnd"
+                        (click)="loadMoreDiaries()">{{noteLoadingEnd?'已加载全部数据':'加载更多'}}</button>
+                </div>
+
+            </nz-list>
+
+
+
+
+        </nz-card>
+    </div>
+</div>

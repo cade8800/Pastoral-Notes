@@ -1,0 +1,133 @@
+<div nz-row nzGutter="24" class="py-lg">
+  <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="7">
+    <nz-card [nzBordered]="false" class="mb-lg" [nzLoading]="false">
+      <ng-container>
+        <div class="tags">
+          <div class="tagsTitle">标签</div>
+
+          <nz-spin [nzSpinning]="labelLoading">
+
+            <nz-tag class="notes_tag" nzMode="checkable" [(nzChecked)]="getNotesInput.hasNoLabels"
+              (nzCheckedChange)="getHasNoLabelNotes($event)">
+              <span>无标签</span>
+            </nz-tag>
+
+            <nz-tag class="notes_tag" *ngFor="let tag of labels" nzMode="checkable" [(nzChecked)]="tag.selected"
+              (nzCheckedChange)="changeLabel($event, tag)">
+              <span>{{ tag.name }}</span>
+              ({{tag.recordTotal||0}})
+            </nz-tag>
+
+            <nz-empty nzNotFoundImage="simple" *ngIf="labels.length === 0" class="tags_empty"></nz-empty>
+          </nz-spin>
+
+        </div>
+
+        <nz-divider nzDashed></nz-divider>
+
+        <div class="team">
+          <div class="teamTitle">分类</div>
+
+          <nz-list [nzLoading]="categoryLoading">
+
+
+            <nz-list-item (click)='getHasNoCategoryNotes()'>
+
+              <nz-list-item-meta>
+                <nz-list-item-meta-title>
+                  <a>
+                    <i nz-icon nzType="caret-right" nzTheme="outline" *ngIf='getNotesInput.hasNoCategories'></i> 未分类
+                  </a>
+                </nz-list-item-meta-title>
+              </nz-list-item-meta>
+              <ul nz-list-item-actions>
+                <nz-list-item-action></nz-list-item-action>
+              </ul>
+
+            </nz-list-item>
+
+
+
+            <nz-list-item *ngFor="let item of categories" (click)='changeCategory(item)'>
+
+              <nz-list-item-meta>
+                <nz-list-item-meta-title>
+                  <a>
+                    <!-- [ngStyle]="{'font-weight':item.selected  ? '600' : '500' }" -->
+                    <i nz-icon nzType="caret-right" nzTheme="outline" *ngIf='item.selected'></i> {{ item.name }}
+                  </a>
+                </nz-list-item-meta-title>
+              </nz-list-item-meta>
+              <ul nz-list-item-actions>
+                <nz-list-item-action>({{item.recordTotal||0}})</nz-list-item-action>
+              </ul>
+
+            </nz-list-item>
+
+            <nz-list-empty *ngIf="categories.length === 0"></nz-list-empty>
+          </nz-list>
+
+        </div>
+
+      </ng-container>
+    </nz-card>
+  </div>
+
+  <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="17">
+    <nz-card class="tabsCard" [nzBordered]="false">
+
+      <nz-list nzItemLayout="vertical" [nzLoading]="noteLoading">
+        <nz-list-item *ngFor="let item of notePages.content">
+          <nz-list-item-meta>
+            <nz-list-item-meta-title>
+              <a (click)='view(item)'>{{ item.title }}</a>
+            </nz-list-item-meta-title>
+            <nz-list-item-meta-description>
+              {{ item.summary }}
+            </nz-list-item-meta-description>
+          </nz-list-item-meta>
+          <div style="min-height: 50px; overflow: hidden;">
+            {{ item.content }}
+          </div>
+          <ul nz-list-item-actions>
+            <nz-list-item-action>
+              {{item.updateTime|date:'yyyy-MM-dd HH:mm'}}
+            </nz-list-item-action>
+            <nz-list-item-action>
+              <span (click)='view(item)'><i nz-icon nzType="eye"></i> </span>
+            </nz-list-item-action>
+            <nz-list-item-action>
+              <span (click)='edit(item)'><i nz-icon nzType="edit"></i> </span>
+            </nz-list-item-action>
+            <nz-list-item-action>
+              <span nz-popconfirm nzPopconfirmTitle="删除后不可恢复，确定删除吗？" nzPopconfirmPlacement="bottom"
+                (nzOnConfirm)="deleteNote(item)">
+                <i nz-icon nzType="delete"></i>
+              </span>
+
+            </nz-list-item-action>
+          </ul>
+          <nz-list-item-extra>
+            <div class="list_img" *ngIf='item.coverUrl'>
+              <img [src]="item.coverUrl" />
+            </div>
+          </nz-list-item-extra>
+        </nz-list-item>
+
+        <nz-skeleton [nzAvatar]="false" [nzActive]="true" [nzTitle]="true" [nzLoading]="loadMore"> </nz-skeleton>
+
+        <nz-list-empty *ngIf="notePages.content.length === 0"></nz-list-empty>
+
+
+        <div class="loadmore" *ngIf="notePages.content.length> 0" nz-list-load-more>
+          <button nz-button *ngIf="true" [nzLoading]="loadMore" [disabled]="noteLoadingEnd"
+            (click)="loadMoreNote()">{{noteLoadingEnd?'已加载全部数据':'加载更多'}}</button>
+        </div>
+
+      </nz-list>
+
+    </nz-card>
+  </div>
+</div>
+
+<nz-back-top></nz-back-top>

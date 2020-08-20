@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.graze.pastoral.notes.api.dao.NoteMapper">
+
+    <resultMap id="GetNoteOutputsMap" type="com.graze.pastoral.notes.domain.dto.note.NoteOutput">
+        <result property="id" column="id" javaType="java.util.UUID" jdbcType="VARCHAR"
+                typeHandler="com.graze.pastoral.notes.api.handler.UuidTypeHandler"/>
+        <result column="title" property="title"/>
+        <result column="summary" property="summary"/>
+        <result column="cover_url" property="coverUrl"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <select id="getNotes" resultMap="GetNoteOutputsMap">
+        select * from pn_note n
+        where n.is_deleted=false
+        and n.create_user_id=#{createUserId}
+
+        <if test="keyword != null and keyword != ''">
+            <bind name="title" value="'%' + keyword + '%'"/>
+            and n.title like #{title}
+        </if>
+
+        <choose>
+            <when test="categoryId != null and categoryId != ''">
+                and n.id in (select c.note_id from pn_note_category c where c.category_id=#{categoryId} and
+                c.is_deleted=false)
+            </when>
+            <when test="hasNoCategories==true">
+                and n.id not in (select c.note_id from pn_note_category c where c.is_deleted=false)
+            </when>
+        </choose>
+
+        <choose>
+            <when test="labelId != null and labelId != ''">
+                and n.id in (select l.note_id from pn_note_label l where l.label_id=#{labelId} and l.is_deleted=false)
+            </when>
+            <when test="hasNoLabels==true">
+                and n.id not in (select l.note_id from pn_note_label l where l.is_deleted=false)
+            </when>
+        </choose>
+
+    </select>
+
+    <resultMap id="GetNotesDetailMap" type="com.graze.pastoral.notes.domain.dto.note.NotesDetailOutput"
+               extends="GetNoteOutputsMap">
+    </resultMap>
+    <select id="getNotesDetail" resultMap="GetNotesDetailMap">
+        select
+            n.id,
+            n.title,
+            n.summary,
+            n.cover_url,
+            n.content,
+            n.create_time,
+            n.update_time
+        from pn_note n
+        where
+            n.id=#{noteId}
+            and n.is_deleted=false
+            and n.create_user_id=#{createUserId}
+    </select>
+
+    <update id="updateNote">
+        update pn_note n
+        set n.title=#{title},
+        n.summary=#{summary},
+        n.cover_url=#{coverUrl},
+        n.content=#{content},
+        n.update_user_id=#{currentUserId},
+        n.update_time=#{updateTime}
+        where n.id=#{noteId}
+        and n.create_user_id=#{currentUserId}
+    </update>
+
+    <update id="deleteNoteById">
+        UPDATE pn_note n
+        SET n.is_deleted=true,
+        n.update_user_id=#{currentUserId},
+        n.update_time=#{updateTime}
+        WHERE n.id=#{noteId}
+        AND n.create_user_id=#{currentUserId}
+    </update>
+
+</mapper>
